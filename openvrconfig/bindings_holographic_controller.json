@@ -1,0 +1,52 @@
+{
+   "action_manifest_version": 0,
+   "alias_info": {},
+   "bindings": {
+      "/actions/main": {
+         "sources": [
+            {
+               "inputs": {
+                  "click": {
+                     "output": "/actions/main/in/PrimaryAction"
+                  }
+               },
+               "mode": "trigger",
+               "path": "/user/hand/left/input/trigger"
+            },
+            {
+               "inputs": {
+                  "click": {
+                     "output": "/actions/main/in/PrimaryAction"
+                  }
+               },
+               "mode": "trigger",
+               "path": "/user/hand/right/input/trigger"
+            },
+            {
+               "inputs": {
+                  "click": {
+                     "output": "/actions/main/in/SecondaryAction"
+                  }
+               },
+               "mode": "button",
+               "path": "/user/hand/left/input/grip"
+            },
+            {
+               "inputs": {
+                  "click": {
+                     "output": "/actions/main/in/SecondaryAction"
+                  }
+               },
+               "mode": "button",
+               "path": "/user/hand/right/input/grip"
+            }
+         ]
+      }
+   },
+   "category": "steamvr_input",
+   "controller_type": "holographic_controller",
+   "description": "Trigger: primary action, grip: secondary action",
+   "name": "MaSzyna default",
+   "options": {},
+   "simulated_actions": []
+}

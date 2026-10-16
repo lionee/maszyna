@@ -2,7 +2,7 @@
 #include "vr_interface.h"
 #include <openvr/openvr.h>
 
-class vr_openvr : vr_interface
+class vr_openvr : public vr_interface
 {
 private:
     struct controller_info {

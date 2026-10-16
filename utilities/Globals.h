@@ -299,7 +299,7 @@ struct global_settings {
     std::string gfx_angleplatform;
     bool gfx_gldebug = false;
     bool vr = false;
-    std::string vr_backend;
+    std::string vr_backend{ "openvr" };
 
     float gfx_distance_factor_max { 3.f };
     float gfx_shadow_angle_min { -0.2f };

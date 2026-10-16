@@ -11,9 +11,11 @@ vr_openvr::vr_openvr()
     vr::EVRInitError vr_error;
     vr_system = vr::VR_Init(&vr_error, vr::VRApplication_Scene);
     if (vr_error != vr::VRInitError_None) {
-        ErrorLog("failed to init openvr!");
+        ErrorLog(std::string("failed to init openvr: ") + vr::VR_GetVRInitErrorAsEnglishDescription(vr_error));
+        vr_system = nullptr;
         return;
     }
+    WriteLog("openvr initialized");
 
     vr::VRCompositor()->SetTrackingSpace(vr::TrackingUniverseSeated);
     vr::VRInput()->GetInputSourceHandle("/user/hand/left", &inputhandle_left);
@@ -385,12 +387,19 @@ void vr_openvr::finish_frame()
 
 vr_openvr::~vr_openvr()
 {
-    vr::VR_Shutdown();
+    if (vr_system)
+        vr::VR_Shutdown();
 }
 
 std::unique_ptr<vr_interface> vr_openvr::create_func()
 {
-    return std::unique_ptr<vr_interface>(new vr_openvr());
+    auto backend = std::make_unique<vr_openvr>();
+    if (!backend->vr_system) {
+        // SteamVR not running or no headset; fall back to regular desktop rendering
+        ErrorLog("openvr unavailable, continuing without vr");
+        return nullptr;
+    }
+    return backend;
 }
 
 std::unordered_map<std::string, vr_openvr::button_bindings> vr_openvr::m_buttonbindings =

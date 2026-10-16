@@ -397,7 +397,7 @@ if (ADD_VERSION_SUFFIX)
 endif()
 
 set(OPENVR_LIBRARY "openvr_api")
-set(OPENVR_INCLUDE_DIR "")
+set(OPENVR_INCLUDE_DIR "${DEPS_DIR}/openvr/include")
 
 if (WIN32)
 	set(DEFINITIONS ${DEFINITIONS} "HAVE_ROUND") # to make pymath to not redefine round
@@ -660,6 +660,18 @@ if (WIN32)
 	)
 endif ()
 
+# OpenVR: the runtime dll and the SteamVR input manifest/bindings have to sit next to the executable
+if (WITH_OPENVR)
+	if (WIN32)
+		add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different "${DEPS_DIR}/openvr/bin/${ARCH}/openvr_api.dll" "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+		)
+	endif()
+	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/openvrconfig" "$<TARGET_FILE_DIR:${PROJECT_NAME}>/openvrconfig"
+	)
+endif()
+
 if(WIN32 AND WITH_PYTHON)
 	add_custom_command(
 		TARGET ${PROJECT_NAME} POST_BUILD
@@ -735,4 +747,4 @@ if(WITH_TESTS)
 	# Visual Studio builds rerun them with the next change of the game)
 	set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY LINK_DEPENDS
 		$<TARGET_FILE:eu07_unit_tests> ${UNIT_TEST_DATA} "${CMAKE_CURRENT_SOURCE_DIR}/tests/unit/run_tests.cmake")
-endif()
+endif()

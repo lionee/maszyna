@@ -1,0 +1,88 @@
+{
+   "action_manifest_version": 0,
+   "alias_info": {},
+   "bindings": {
+      "/actions/main": {
+         "sources": [
+            {
+               "inputs": {
+                  "click": {
+                     "output": "/actions/main/in/PrimaryAction"
+                  }
+               },
+               "mode": "trigger",
+               "path": "/user/hand/left/input/trigger"
+            },
+            {
+               "inputs": {
+                  "click": {
+                     "output": "/actions/main/in/PrimaryAction"
+                  }
+               },
+               "mode": "trigger",
+               "path": "/user/hand/right/input/trigger"
+            },
+            {
+               "inputs": {
+                  "click": {
+                     "output": "/actions/main/in/SecondaryAction"
+                  }
+               },
+               "mode": "trigger",
+               "path": "/user/hand/left/input/grip"
+            },
+            {
+               "inputs": {
+                  "click": {
+                     "output": "/actions/main/in/SecondaryAction"
+                  }
+               },
+               "mode": "trigger",
+               "path": "/user/hand/right/input/grip"
+            },
+            {
+               "inputs": {
+                  "click": {
+                     "output": "/actions/main/in/PrimaryAction"
+                  }
+               },
+               "mode": "button",
+               "path": "/user/hand/right/input/a"
+            },
+            {
+               "inputs": {
+                  "click": {
+                     "output": "/actions/main/in/SecondaryAction"
+                  }
+               },
+               "mode": "button",
+               "path": "/user/hand/right/input/b"
+            },
+            {
+               "inputs": {
+                  "click": {
+                     "output": "/actions/main/in/PrimaryAction"
+                  }
+               },
+               "mode": "button",
+               "path": "/user/hand/left/input/x"
+            },
+            {
+               "inputs": {
+                  "click": {
+                     "output": "/actions/main/in/SecondaryAction"
+                  }
+               },
+               "mode": "button",
+               "path": "/user/hand/left/input/y"
+            }
+         ]
+      }
+   },
+   "category": "steamvr_input",
+   "controller_type": "hpmotioncontroller",
+   "description": "Trigger/A/X: primary action, grip/B/Y: secondary action",
+   "name": "MaSzyna default",
+   "options": {},
+   "simulated_actions": []
+}
