@@ -300,6 +300,7 @@ struct global_settings {
     bool gfx_gldebug = false;
     bool vr = false;
     std::string vr_backend{ "openvr" };
+    std::string config_file; // path of the ini file the settings were loaded from
 
     float gfx_distance_factor_max { 3.f };
     float gfx_shadow_angle_min { -0.2f };

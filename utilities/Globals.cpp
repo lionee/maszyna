@@ -32,6 +32,7 @@ void global_settings::LoadIniFile(std::string asFileName)
 	fMoveLight = tm.tm_yday + 1; // numer bieżącego dnia w roku
 	simulation::Environment.compute_season(fMoveLight);
 
+	config_file = asFileName;
 	cParser parser(asFileName, cParser::buffer_FILE);
 	ConfigParse(parser);
 }
@@ -1751,6 +1752,8 @@ global_settings::export_as_text( std::ostream &Output ) const {
     // TODO: export gfx_format_depth
     export_as_text( Output, "gfx.skiprendering", gfx_skiprendering );
     export_as_text( Output, "gfx.skippipeline", gfx_skippipeline );
+    export_as_text( Output, "vr.enabled", vr );
+    export_as_text( Output, "vr.backend", vr_backend );
     export_as_text( Output, "gfx.extraeffects", gfx_extraeffects );
     export_as_text( Output, "gfx.shadergamma", gfx_shadergamma );
     export_as_text( Output, "gfx.shadow.angle.min", gfx_shadow_angle_min );

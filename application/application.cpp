@@ -351,7 +351,7 @@ int eu07_application::init(int Argc, char *Argv[])
 		WriteLog("Crashdump analysis provided by " + crashreport_get_provider() + "\n");
 
 	{
-		WriteLog("// settings");
+		WriteLog("// settings, loaded from: " + Global.config_file);
 		std::stringstream settingspipe;
 		Global.export_as_text(settingspipe);
 		WriteLog(settingspipe.str());
