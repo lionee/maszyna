@@ -1,6 +1,8 @@
 #pragma once
 #include "vr_interface.h"
 #include <openvr/openvr.h>
+#include "input/command.h"
+#include "input/drivermouseinput.h"
 
 class vr_openvr : public vr_interface
 {
@@ -24,7 +26,7 @@ private:
 
     std::array<std::unique_ptr<TModel3d>, 2> hiddenarea_mesh;
 
-    uint32_t primary_controller;
+    uint32_t primary_controller = vr::k_unTrackedDeviceIndexInvalid;
     glm::mat4 primary_controller_transform;
 
     user_command command_active = user_command::none;
@@ -40,13 +42,26 @@ private:
     bool should_pause = false;
     bool draw_controllers = true;
 
-    struct button_bindings {
-        user_command primary;
-        user_command secondary;
-    };
+    vr::VRActionHandle_t resetview_action = 0;
 
-    static std::unordered_map<std::string, button_bindings> m_buttonbindings;
     command_relay relay;
+
+    // lever currently held with the controller
+    mouse_slider lever;
+    double lever_start_position = 0.0;
+    float lever_start_height = 0.0f;
+    // hand travel, in metres, which moves a lever across its whole range
+    static constexpr double LEVER_TRAVEL = 0.30;
+
+    // command repeat while a button is held, in seconds
+    double repeat_accumulator = 0.0;
+    static constexpr double REPEAT_DELAY = 0.25;
+    static constexpr double REPEAT_RATE = 0.075;
+
+    bool pick_pending = false;
+
+    void update_controls(vr::InputDigitalActionData_t const &primary, vr::InputDigitalActionData_t const &secondary);
+    void reset_view();
 
 public:
     vr_openvr();

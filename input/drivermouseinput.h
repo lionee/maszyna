@@ -21,8 +21,20 @@ public:
 // methods
     void
         bind( user_command const &Command );
+    // calculates initial value and range for specified command, without touching the mouse cursor. returns: true if the slider is usable
+    bool
+        setup( user_command const &Command );
     void
         release();
+    // releases the slider without touching the mouse cursor
+    void
+        clear() {
+            m_command = user_command::none; }
+    // slider position in range 0-1
+    double
+        position() const;
+    void
+        set_position( double Position );
     void
         on_move( double const Mousex, double const Mousey );
     inline
@@ -70,21 +82,26 @@ public:
     std::pair<user_command, user_command>
         bindings( std::string const &Control ) const;
 
-private:
 // types
     struct button_bindings {
 
         user_command left;
         user_command right;
     };
+    using buttonbindings_map = std::unordered_map<std::string, button_bindings>;
+
+    // default cab control -> command table, shared with the vr controllers
+    static buttonbindings_map const &
+        control_bindings();
+
+private:
+// types
 
     struct wheel_bindings {
         
         user_command up;
         user_command down;
     };
-
-    using buttonbindings_map = std::unordered_map<std::string, button_bindings>;
 
 // methods
     void

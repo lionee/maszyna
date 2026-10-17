@@ -75,6 +75,24 @@
                },
                "mode": "button",
                "path": "/user/hand/left/input/y"
+            },
+            {
+               "inputs": {
+                  "click": {
+                     "output": "/actions/main/in/ResetView"
+                  }
+               },
+               "mode": "joystick",
+               "path": "/user/hand/left/input/joystick"
+            },
+            {
+               "inputs": {
+                  "click": {
+                     "output": "/actions/main/in/ResetView"
+                  }
+               },
+               "mode": "joystick",
+               "path": "/user/hand/right/input/joystick"
             }
          ]
       }

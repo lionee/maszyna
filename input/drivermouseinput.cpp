@@ -27,6 +27,23 @@ auto const EU07_CONTROLLER_MOUSESLIDERSIZE{ 0.6 };
 void
 mouse_slider::bind( user_command const &Command ) {
 
+    if( false == setup( Command ) ) { return; }
+
+    // hide the cursor and place it in accordance with current slider value
+    m_cursorposition = glm::dvec2(Global.cursor_pos);
+    Application.set_cursor( GLFW_CURSOR_DISABLED );
+
+    auto const controlsize { Global.window_size.y * EU07_CONTROLLER_MOUSESLIDERSIZE };
+    auto const controledge { Global.window_size.y * 0.5 + controlsize * 0.5 };
+
+    Application.set_cursor_pos(
+        Global.window_size.y,
+        controledge - position() * controlsize );
+}
+
+bool
+mouse_slider::setup( user_command const &Command ) {
+
     m_command = Command;
 
     auto const *train { simulation::Train };
@@ -48,14 +65,14 @@ mouse_slider::bind( user_command const &Command ) {
             break;
         }
     }
-    if( vehicle == nullptr ) { return; }
+    if( vehicle == nullptr ) { return false; }
 
     // calculate initial value and accepted range
     switch( m_command ) {
         case user_command::jointcontrollerset: {
             // NOTE: special case, merges two separate controls
             auto const *occupied { train ? train->Occupied() : nullptr };
-            if( occupied == nullptr ) { return; }
+            if( occupied == nullptr ) { return false; }
 
             auto const powerrange { static_cast<double>(
                 vehicle->CoupledCtrl ?
@@ -107,21 +124,28 @@ mouse_slider::bind( user_command const &Command ) {
             break;
         }
     }
-    // hide the cursor and place it in accordance with current slider value
-    m_cursorposition = glm::dvec2(Global.cursor_pos);
-    Application.set_cursor( GLFW_CURSOR_DISABLED );
+    // NOTE: m_value is kept in vehicle space, position() converts it to the slider space
+    return true;
+}
 
-    auto const controlsize { Global.window_size.y * EU07_CONTROLLER_MOUSESLIDERSIZE };
-    auto const controledge { Global.window_size.y * 0.5 + controlsize * 0.5 };
-    auto const stepsize { controlsize / m_valuerange };
+// current slider position, in range 0-1. for stepped controls, middle of the active step
+double
+mouse_slider::position() const {
 
-    if( m_invertrange ) {
-        m_value = ( m_analogue ? 1.0 : m_valuerange ) - m_value;
+    if( m_analogue ) {
+        return ( m_invertrange ? 1.0 - m_value : m_value );
     }
+    return ( m_valuerange > 0.0 ? ( ( m_invertrange ? m_valuerange - m_value : m_value ) + 0.5 ) / m_valuerange : 0.0 );
+}
 
-    Application.set_cursor_pos(
-        Global.window_size.y,
-        m_analogue ? controledge - m_value * controlsize : controledge - m_value * stepsize - 0.5 * stepsize );
+// sets slider value from position in range 0-1
+void
+mouse_slider::set_position( double Position ) {
+
+    Position = std::clamp( Position, 0.0, 1.0 );
+    m_value = m_analogue ? Position : std::min( std::floor( Position * m_valuerange ), m_valuerange );
+    if( m_invertrange ) {
+        m_value = ( m_analogue ? 1.0 : m_valuerange ) - m_value; }
 }
 
 void
@@ -137,12 +161,9 @@ mouse_slider::on_move( double const /*Mousex*/, double const Mousey ) {
 
     auto const controlsize { Global.window_size.y * EU07_CONTROLLER_MOUSESLIDERSIZE };
     auto const controledge { Global.window_size.y * 0.5 + controlsize * 0.5 };
-    auto const stepsize { controlsize / m_valuerange };
 
     auto mousey = std::clamp( Mousey, controledge - controlsize, controledge );
-    m_value = m_analogue ? (controledge - mousey) / controlsize : std::floor((controledge - mousey) / stepsize);
-    if( m_invertrange ) {
-        m_value = ( m_analogue ? 1.0 : m_valuerange ) - m_value; }
+    set_position( ( controledge - mousey ) / controlsize );
 }
 
 
@@ -488,9 +509,16 @@ drivermouse_input::bindings( std::string const &Control ) const {
 
 void
 drivermouse_input::default_bindings() {
+
+    m_buttonbindings = control_bindings();
+}
+
+// cab control -> command table, shared by the mouse and the vr controllers
+drivermouse_input::buttonbindings_map const &
+drivermouse_input::control_bindings() {
     using enum user_command;
     // pierwsza komenda jest od zwiekszania a druga od zmniejszania - ewentualnie kolejno lewy i prawy przycisk
-    m_buttonbindings = {
+    static buttonbindings_map const bindings = {
         { "jointctrl:", {
             jointcontrollerset,
             none } },
@@ -1110,6 +1138,7 @@ drivermouse_input::default_bindings() {
          } },
 
     };
+    return bindings;
 }
 
 user_command
